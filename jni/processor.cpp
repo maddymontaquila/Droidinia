@@ -99,6 +99,8 @@ JNIEXPORT jboolean JNICALL Java_com_example_LiveFeatureActivity_compileKernels(J
 
 void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int choice)
 {
+	int set_NDRange_size=16;
+
     try {
         cl::Buffer bufferIn = cl::Buffer(gContext, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
                 isize*sizeof(cl_uchar), in, NULL);
@@ -111,7 +113,7 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
         gQueue.enqueueNDRangeKernel(gNV21Kernel,
                 cl::NullRange,
                 cl::NDRange( (int)ceil((float)w/16.0f)*16,(int)ceil((float)h/16.0f)*16),
-                cl::NDRange(16,16),
+                cl::NDRange(set_NDRange_size,set_NDRange_size),
                 NULL,
                 NULL);
         if (choice>0) {
@@ -122,7 +124,7 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
             gQueue.enqueueNDRangeKernel(gLaplacianK,
                     cl::NullRange,
                     cl::NDRange( (int)ceil((float)w/16.0f)*16,(int)ceil((float)h/16.0f)*16),
-                    cl::NDRange(16,16),
+                    cl::NDRange(set_NDRange_size,set_NDRange_size),
                     NULL,
                     NULL);
         }
@@ -133,10 +135,10 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
     }
 }
 
-JNIEXPORT void JNICALL Java_com_example_CameraPreview_runfilter(
+JNIEXPORT void JNICALL Java_com_example_LiveFeatureActivity_runbenchmarks(
         JNIEnv *env,
         jclass clazz,
-        jobject outBmp,
+        jobject output,
         jbyteArray inData,
         jint width,
         jint height,
@@ -144,28 +146,17 @@ JNIEXPORT void JNICALL Java_com_example_CameraPreview_runfilter(
 {
     int outsz = width*height;
     int insz = outsz + outsz/2;
-    AndroidBitmapInfo bmpInfo;
-    if (AndroidBitmap_getInfo(env, outBmp, &bmpInfo) < 0) {
-        throwJavaException(env,"gaussianBlur","Error retrieving bitmap meta data");
-        return;
-    }
-    if (bmpInfo.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
-        throwJavaException(env,"gaussianBlur","Expecting RGBA_8888 format");
-        return;
-    }
-    uint32_t* bmpContent;
-    if (AndroidBitmap_lockPixels(env, outBmp,(void**)&bmpContent) < 0) {
-        throwJavaException(env,"gaussianBlur","Unable to lock bitmap pixels");
-        return;
-    }
+
+    uint32_t* outContent;
+
     jbyte* inPtr = (jbyte*)env->GetPrimitiveArrayCritical(inData, 0);
     if (inPtr == NULL) {
         throwJavaException(env,"gaussianBlur","NV21 byte stream getPointer returned NULL");
         return;
     }
     // call helper for processing frame
-    helper(bmpContent,outsz,(uint8_t*)inPtr,insz,width,height,choice);
+    helper(outContent,outsz,(uint8_t*)inPtr,insz,width,height,choice);
     // This is absolutely neccessary before calling any other JNI function
     env->ReleasePrimitiveArrayCritical(inData,inPtr,0);
-    AndroidBitmap_unlockPixels(env, outBmp);
+    //output
 }

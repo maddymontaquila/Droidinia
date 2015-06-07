@@ -1,13 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-        <FrameLayout
-			android:id="@+id/camera_preview"
-			android:layout_width="fill_parent"
-			android:layout_height="0dp"
-    		android:layout_weight="1"/>
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+        
+        <Button
+            android:id="@+id/selectall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select All" />
+
+        <CheckBox
+            android:id="@+id/leukocyte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Leukocyte" />
+
+        <CheckBox
+            android:id="@+id/heartwall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Heart Wall" />
+
+        <CheckBox
+            android:id="@+id/cfdsolver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CFD Solver" />
+
+        <CheckBox
+            android:id="@+id/ludecomp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LU Decomposition" />
+
+        <CheckBox
+            android:id="@+id/hotspot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HotSpot" />
+
+        <CheckBox
+            android:id="@+id/backpropogation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back Propogation" />
+
+        <CheckBox
+            android:id="@+id/needleman"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Needleman-Wunsch" />
+
+        <CheckBox
+            android:id="@+id/kmeans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kmeans" />
+
+        <CheckBox
+            android:id="@+id/breadthfirst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Breadth-First Search" />
+
+        <CheckBox
+            android:id="@+id/srad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SRAD" />
+
+        <CheckBox
+            android:id="@+id/streamcluster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Streamcluster" />
+
+        <CheckBox
+            android:id="@+id/particlefilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Particle Filter" />
+
+        <CheckBox
+            android:id="@+id/pathfinder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PathFinder" />
+
+        <CheckBox
+            android:id="@+id/gaussian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gaussian Elimination" />
+
+        <CheckBox
+            android:id="@+id/nearestneighbors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="k-Nearest Neighbors" />
+        
+        <CheckBox
+            android:id="@+id/lavamd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LavaMD" />
+                
+        <CheckBox
+            android:id="@+id/myocyte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text= "Myocyte" />
+                
+        <CheckBox
+            android:id="@+id/btree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="B-Tree" />
+                
+        <CheckBox
+            android:id="@+id/gpudwt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GPUDWT" />
+                
+        <CheckBox
+            android:id="@+id/hybridsort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hybrid Sort" />
+        
+        <Button
+            android:id="@+id/runbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Run" />        
+        
+    </LinearLayout>
+
+</ScrollView>

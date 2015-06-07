@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,13 +21,14 @@ public class LiveFeatureActivity extends Activity {
     }
 
     private final String TAG="LiveFeature";
-	private CameraPreview mPreview;
 
 	native private boolean compileKernels();
+	native private void runbenchmarks(Bitmap out, byte[] in, int width, int height, int choice);
 
     private void copyFile(final String f) {
 		InputStream in;
 		try {
+			//creates the output data
 			in = getAssets().open(f);
 			final File of = new File(getDir("execdir",MODE_PRIVATE), f);
 
@@ -53,9 +55,7 @@ public class LiveFeatureActivity extends Activity {
         if( compileKernels() == false )
             Log.i(TAG,"Kernel compilation failed");
 
-        mPreview = new CameraPreview(this);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+        
 	}
 
 	@Override
@@ -68,10 +68,10 @@ public class LiveFeatureActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.iFeed:
-	        	mPreview.setProcessedPreview(0);
+	        	//run kernel
 	            return true;
             case R.id.eFeed:
-                mPreview.setProcessedPreview(1);
+                //run kernel
                 return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
