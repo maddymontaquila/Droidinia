@@ -258,47 +258,6 @@ struct Node
 };
 
 //----------------------------------------------------------
-//--bfs on cpu
-//--programmer:	jianbin
-//--date:	26/01/2011
-//--note: width is changed to the new_width
-//----------------------------------------------------------
-void run_bfs_cpu(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
-		int *h_graph_edges, char *h_graph_mask, char *h_updating_graph_mask, \
-		char *h_graph_visited, int *h_cost_ref){
-	char stop;
-	int k = 0;
-	do{
-		//if no thread changes this value then the loop stops
-		stop=false;
-		for(int tid = 0; tid < no_of_nodes; tid++ )
-		{
-			if (h_graph_mask[tid] == true){
-				h_graph_mask[tid]=false;
-				for(int i=h_graph_nodes[tid].starting; i<(h_graph_nodes[tid].no_of_edges + h_graph_nodes[tid].starting); i++){
-					int id = h_graph_edges[i];	//--cambine: node id is connected with node tid
-					if(!h_graph_visited[id]){	//--cambine: if node id has not been visited, enter the body below
-						h_cost_ref[id]=h_cost_ref[tid]+1;
-						h_updating_graph_mask[id]=true;
-					}
-				}
-			}
-		}
-
-  		for(int tid=0; tid< no_of_nodes ; tid++ )
-		{
-			if (h_updating_graph_mask[tid] == true){
-			h_graph_mask[tid]=true;
-			h_graph_visited[tid]=true;
-			stop=true;
-			h_updating_graph_mask[tid]=false;
-			}
-		}
-		k++;
-	}
-	while(stop);
-}
-//----------------------------------------------------------
 //--breadth first search on GPUs
 //----------------------------------------------------------
 void run_bfs_gpu(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
@@ -415,11 +374,12 @@ fprintf(stderr,"Usage: %s <input_file>\n", argv[0]);
 //--author:		created by Jianbin Fang
 //--date:		25/01/2011
 //----------------------------------------------------------
-void mainRunBFS(int argc, char * argv[])
+void mainRunBFS(char * argv[])
 {
 	int no_of_nodes;
 	int edge_list_size;
 	FILE *fp;
+	int argc = 4; //was originally a main argument of function
 	Node* h_graph_nodes;
 	char *h_graph_mask, *h_updating_graph_mask, *h_graph_visited;
 	try{
