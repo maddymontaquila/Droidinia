@@ -15,6 +15,10 @@ static cl::CommandQueue gQueue;
 static cl::Kernel       gNV21Kernel;
 static cl::Kernel       gLaplacianK;
 
+
+//me making sure I actually know how to push something to the repository
+
+
 char *file_contents(const char *filename, int *length)
 {
     FILE *f = fopen(filename, "r");
