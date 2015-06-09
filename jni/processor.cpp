@@ -376,6 +376,7 @@ fprintf(stderr,"Usage: %s <input_file>\n", argv[0]);
 //----------------------------------------------------------
 void mainRunBFS(char * argv[])
 {
+
 	int no_of_nodes;
 	int edge_list_size;
 	FILE *fp;
