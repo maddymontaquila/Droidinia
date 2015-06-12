@@ -14,37 +14,26 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class CameraPreview {
+public class BenchmarkHandler {
     static {
         System.loadLibrary("JNIProcessor");
     }
 
-	private static final String TAG = "CameraPreview";
+	private static final String TAG = "BenchmarkHandler";
 
-    private Camera 	mCamera;
-    private byte[] 	mVideoSource;
     private Bitmap 	mBackBuffer;
     private int[]	mImgDims;
-    private Paint 	mPaint;
     private Rect	mSrcRect;
     private Rect	mTrgtRect;
-    private int     mChoice;
+    private int[]     mChoice;
 
-    native private void runfilter(Bitmap out, byte[] in, int width, int height, int choice);
+    native private void runbenchmarks(Bitmap out, byte[] in, int width, int height, int[] choice);
 
-    public void setProcessedPreview(int choice) {
-    	mChoice = choice;
-        if (choice==0){
-            //
-        }
-        else if (choice==1){
-            //
-        }
-    }
 
-    public void onPreviewFrame(byte[] data, Camera camera) {
+    public void startTests(byte[] data, int[] choice) {
+    	mChoice=choice;
     	try {
-            runfilter(mBackBuffer,data,mImgDims[0],mImgDims[1],mChoice);
+            runbenchmarks(mBackBuffer,data,mImgDims[0],mImgDims[1],mChoice);
     	} catch(Exception e) {
     		Log.i(TAG, e.getMessage());
     	}

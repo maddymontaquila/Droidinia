@@ -104,7 +104,7 @@ JNIEXPORT jboolean JNICALL Java_com_example_LiveFeatureActivity_compileKernels(J
     }
 }
 
-void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int choice)
+void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int choice[])
 {
 	int set_NDRange_size=16;
 
@@ -113,17 +113,14 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
                 isize*sizeof(cl_uchar), in, NULL);
         cl::Buffer bufferOut = cl::Buffer(gContext, CL_MEM_READ_WRITE, osize*sizeof(cl_uchar4));
         cl::Buffer bufferOut2= cl::Buffer(gContext, CL_MEM_READ_WRITE, osize*sizeof(cl_uchar4));
-        gNV21Kernel.setArg(2,w);
-        gNV21Kernel.setArg(3,h);
-        gNV21Kernel.setArg(1,bufferIn);
-        gNV21Kernel.setArg(0,bufferOut);
-        gQueue.enqueueNDRangeKernel(gNV21Kernel,
-                cl::NullRange,
-                cl::NDRange( (int)ceil((float)w/16.0f)*16,(int)ceil((float)h/16.0f)*16),
-                cl::NDRange(set_NDRange_size,set_NDRange_size),
-                NULL,
-                NULL);
-        if (choice>0) {
+
+        ////do we need to declare the buffer sizes????????////
+
+
+        if (choice[0]==1) {
+        	/***ZACH*** Here is where you're going to do BFS
+        	 * I don't know what sequential number bfs is yet. I'll figure it out eventually.....
+        	 */
             gLaplacianK.setArg(2,w);
             gLaplacianK.setArg(3,h);
             gLaplacianK.setArg(1,bufferOut);
@@ -137,11 +134,7 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
         }
         gQueue.enqueueReadBuffer(bufferOut2, CL_TRUE, 0, osize*sizeof(cl_uchar4), out);
 
-/*
-        if (choice = bfs) {
 
-        }
-*/
 
     }
     catch (cl::Error e) {
@@ -156,7 +149,7 @@ JNIEXPORT void JNICALL Java_com_example_LiveFeatureActivity_runbenchmarks(
         jbyteArray inData,
         jint width,
         jint height,
-        jint choice)
+        jint choice[])
 {
     int outsz = width*height;
     int insz = outsz + outsz/2;
@@ -374,7 +367,7 @@ fprintf(stderr,"Usage: %s <input_file>\n", argv[0]);
 //--author:		created by Jianbin Fang
 //--date:		25/01/2011
 //----------------------------------------------------------
-void mainRunBFS(char * argv[])
+int mainRunBFS(char * argv[])
 {
 
 	int no_of_nodes;
@@ -396,7 +389,7 @@ void mainRunBFS(char * argv[])
 		fp = fopen(input_f,"r");
 		if(!fp){
 		  printf("Error Reading graph file\n");
-		  return 0;
+		  return -1;
 		}
 
 		int source = 0;
@@ -482,7 +475,7 @@ void mainRunBFS(char * argv[])
 
 	}
 	catch(std::string msg){
-		std::cout<<"--cambine: exception in main ->"<<msg<<std::endl;
+		std::cout<<"--combine: exception in main ->"<<msg<<std::endl;
 		//release host memory
 		free(h_graph_nodes);
 		free(h_graph_mask);

@@ -222,7 +222,7 @@ inline void timer::start()
 	"eax", "edx"
     );
 #else
-#error Compiler/Architecture not recognized
+//#error Compiler/Architecture not recognized
 #endif
 }
 

@@ -67,12 +67,6 @@ public class LiveFeatureActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
-	        case R.id.iFeed:
-	        	//run kernel
-	            return true;
-            case R.id.eFeed:
-                //run kernel
-                return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
