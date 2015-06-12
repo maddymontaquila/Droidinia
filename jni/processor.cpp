@@ -133,7 +133,9 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
 
         	/***MADDY*** Above is the call to the function to run bfs
         	 * I still need to convert all the output there to go to an outfile
+        	 *
         	 */
+
             gLaplacianK.setArg(2,w);
             gLaplacianK.setArg(3,h);
             gLaplacianK.setArg(1,bufferOut);
@@ -146,8 +148,6 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
                     NULL);
         }
         gQueue.enqueueReadBuffer(bufferOut2, CL_TRUE, 0, osize*sizeof(cl_uchar4), out);
-
-
 
     }
     catch (cl::Error e) {
@@ -174,6 +174,12 @@ JNIEXPORT void JNICALL Java_com_example_LiveFeatureActivity_runbenchmarks(
         throwJavaException(env,"gaussianBlur","NV21 byte stream getPointer returned NULL");
         return;
     }
+
+    /***MADDY***
+     * What is going on here with the helper call?
+     * It appears to send the width and height of the screen, which I think we will no longer need
+     */
+
     // call helper for processing frame
     helper(outContent,outsz,(uint8_t*)inPtr,insz,width,height,choice);
     // This is absolutely necessary before calling any other JNI function
