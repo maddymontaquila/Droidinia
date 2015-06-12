@@ -18,8 +18,8 @@ static cl::Context      gContext;
 static cl::CommandQueue gQueue;
 static cl::Kernel       gNV21Kernel;
 static cl::Kernel       gLaplacianK;
-//static cl::Kernel		gbfs; //also, bfs has two separate kernels for different numbers of arguments.
-							  //I have yet to look into whatever that does.
+static cl::Kernel		gbfs; //also, bfs has two separate kernels for different numbers of arguments.
+							  //I have yet to look into whatever each does.
 
 
 char *file_contents(const char *filename, int *length)
@@ -450,7 +450,8 @@ int mainRunBFS(char * argv[])
 		h_cost_ref[source]=0;
 		//---------------------------------------------------------
 		//--gpu entry
-		run_bfs_gpu(no_of_nodes,h_graph_nodes,edge_list_size,h_graph_edges, h_graph_mask, h_updating_graph_mask, h_graph_visited, h_cost);
+		run_bfs_gpu(no_of_nodes,h_graph_nodes,edge_list_size,h_graph_edges,
+				h_graph_mask, h_updating_graph_mask, h_graph_visited, h_cost);
 		//---------------------------------------------------------
 
 		//release host memory
