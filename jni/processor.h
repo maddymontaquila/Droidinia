@@ -901,7 +901,7 @@ void _clInvokeKernel(int kernel_id, int work_items, int work_group_size) throw(s
 	oclHandles.cl_status = clEnqueueNDRangeKernel(oclHandles.queue, oclHandles.kernel[kernel_id], work_dim, 0, \
 											global_work_size, local_work_size, 0 , 0, &(e[0]) );
 	#ifdef ERRMSG
-	oclHandles.error_str = "excpetion in _clInvokeKernel() -> ";
+	oclHandles.error_str = "exception in _clInvokeKernel() -> ";
 	switch(oclHandles.cl_status)
 	{
 		case CL_INVALID_PROGRAM_EXECUTABLE:

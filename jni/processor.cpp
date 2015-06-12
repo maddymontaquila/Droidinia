@@ -10,7 +10,7 @@ using namespace std; //from timer.cc
 //NOT KNOWN: issues involved with bringing over a bunch. Need to see if include guards covered major
 //issues and if things have been brought over correctly
 //Q: the Node struct is currently both defined in kernels.cl and in processor.cpp. Problem?
-//Also need to figure out use of bfs make.config file in determining determination between nvidia and amd
+//Also need to figure out use of bfs make.config file in  determination between nvidia and amd
 
 
 
@@ -20,6 +20,10 @@ static cl::Kernel       gNV21Kernel;
 static cl::Kernel       gLaplacianK;
 static cl::Kernel		gbfs; //also, bfs has two separate kernels for different numbers of arguments.
 							  //I have yet to look into whatever each does.
+
+
+//Forward declaration of main runBFS function
+int mainRunBFS(char * argv[]);
 
 
 char *file_contents(const char *filename, int *length)
@@ -118,8 +122,17 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
 
 
         if (choice[0]==1) {
+
+        	char filePath[] = "../assets/graph4096.txt";
+        	char* filePathptr = &filePath[0];
+        	int result = mainRunBFS(&filePathptr);
+        	//int result = mainRunBFS(char * argv[]); // need a c string to pass it
         	/***ZACH*** Here is where you're going to do BFS
         	 * I don't know what sequential number bfs is yet. I'll figure it out eventually.....
+        	 */
+
+        	/***MADDY*** Above is the call to the function to run bfs
+        	 * I still need to convert all the output there to go to an outfile
         	 */
             gLaplacianK.setArg(2,w);
             gLaplacianK.setArg(3,h);
@@ -383,7 +396,7 @@ int mainRunBFS(char * argv[])
 		  exit(0);
 		}
 
-		input_f = argv[1];
+		input_f = argv[0]; //changed to 0 because of how c string is handled in helper
 		printf("Reading File\n");
 		//Read in Graph from a file
 		fp = fopen(input_f,"r");
