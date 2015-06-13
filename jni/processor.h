@@ -947,7 +947,7 @@ void _clInvokeKernel(int kernel_id, int work_items, int work_group_size) throw(s
 			oclHandles.error_str += "CL_OUT_OF_HOST_MEMORY";
 			break;
 		default:
-			oclHandles.error_str += "Unkown reseason";
+			oclHandles.error_str += "Unknown reason";
 			break;
 	}
 	if(oclHandles.cl_status != CL_SUCCESS)

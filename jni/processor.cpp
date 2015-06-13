@@ -33,7 +33,7 @@ char *file_contents(const char *filename, int *length)
 
     if (!f) {
         LOGE("Unable to open %s for reading\n", filename);
-        return NULL;
+        return (NULL);
     }
 
     fseek(f, 0, SEEK_END);
@@ -45,7 +45,7 @@ char *file_contents(const char *filename, int *length)
     fclose(f);
     ((char*)buffer)[*length] = '\0';
 
-    return (char*)buffer;
+    return ((char*)buffer);
 }
 
 bool throwJavaException(JNIEnv *env,std::string method_name,std::string exception_msg, int errorCode=0)
@@ -60,9 +60,9 @@ bool throwJavaException(JNIEnv *env,std::string method_name,std::string exceptio
     jclass generalExp = env->FindClass("java/lang/Exception");
     if (generalExp != 0) {
         env->ThrowNew(generalExp, msg.c_str());
-        return true;
+        return (true);
     }
-    return false;
+    return (false);
 }
 
 void cb(cl_program p,void* data)
@@ -84,7 +84,7 @@ JNIEXPORT jboolean JNICALL Java_com_example_LiveFeatureActivity_compileKernels(J
         std::vector<cl::Platform> platforms;
         cl::Platform::get(&platforms);
         if (platforms.size() == 0) {
-            return false;
+            return (false);
         }
         cl_context_properties properties[] =
         { CL_CONTEXT_PLATFORM, (cl_context_properties)(platforms[0])(), 0};
@@ -99,18 +99,27 @@ JNIEXPORT jboolean JNICALL Java_com_example_LiveFeatureActivity_compileKernels(J
         while(program.getBuildInfo<CL_PROGRAM_BUILD_STATUS>(devices[0]) != CL_BUILD_SUCCESS);
         gNV21Kernel = cl::Kernel(program, "nv21torgba", &err);
         gLaplacianK = cl::Kernel(program, "laplacian", &err);
-        return true;
+        return (true);
     }
     catch (cl::Error e) {
         if( !throwJavaException(env,"decode",e.what(),e.err()) )
             LOGI("@decode: %s \n",e.what());
-        return false;
+        return (false);
     }
 }
 
 void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int choice[])
 {
 	int set_NDRange_size=16;
+
+	//opening file and closing. Will append to it in later methods
+	 FILE *log = fopen("logfile.txt", "w");
+	    if (!log) {
+	        printf("\nCannot open logfile.txt for writing.\n");
+	        return;   // bail out if we can't log
+	    }
+	    fclose(log);
+
 
     try {
         cl::Buffer bufferIn = cl::Buffer(gContext, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
@@ -126,6 +135,7 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
         	char filePath[] = "../assets/graph4096.txt";
         	char* filePathptr = &filePath[0];
         	int result = mainRunBFS(&filePathptr);
+        	//also, if result is negative one, need to indicate an error
         	//int result = mainRunBFS(char * argv[]); // need a c string to pass it
         	/***ZACH*** Here is where you're going to do BFS
         	 * I don't know what sequential number bfs is yet. I'll figure it out eventually.....
@@ -208,7 +218,7 @@ double timer::get_CPU_speed_in_MHz()
     }
 #endif
 
-    return 0.0;
+    return (0.0);
 }
 
 void timer::print_time(ostream &str, const char *which, double time) const
@@ -242,19 +252,19 @@ ostream &timer::print(ostream &str)
     else
 	str << "not used\n";
 
-    return str;
+    return (str);
 }
 
 ostream &operator << (ostream &str, class timer &timer)
 {
-    return timer.print(str);
+    return (timer.print(str));
 }
 
 double timer::getTimeInSeconds()
 {
     double total = static_cast<double>(total_time);
     double res = (total / 1000000.0) / CPU_speed_in_MHz;
-    return res;
+    return (res);
 }
 
 
@@ -349,7 +359,10 @@ void run_bfs_gpu(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
 		_clMemcpyD2H(d_cost,no_of_nodes*sizeof(int), h_cost);
 		//--statistics
 #ifdef	PROFILING
-		std::cout<<"kernel time(s):"<<kernel_time<<std::endl;
+		FILE *log = fopen("logfile.txt", "a");
+		fprintf("\nKernel Time(s): %d\n", kernel_time);
+		//std::cout<<"kernel time(s):"<<kernel_time<<std::endl;
+		fclose(log);
 #endif
 		//--4 release cl resources.
 		_clFree(d_graph_nodes);
@@ -377,9 +390,10 @@ void run_bfs_gpu(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
 	return ;
 }
 void Usage(int argc, char**argv){
-
-fprintf(stderr,"Usage: %s <input_file>\n", argv[0]);
-
+	FILE *log = fopen("logfile.txt", "a");
+	fprintf(log, "Usage: %s <input file>\n", argv[0]);
+	//fprintf(stderr,"Usage: %s <input_file>\n", argv[0]);
+	fclose(log);
 }
 //----------------------------------------------------------
 //--cambine:	main function
@@ -388,6 +402,13 @@ fprintf(stderr,"Usage: %s <input_file>\n", argv[0]);
 //----------------------------------------------------------
 int mainRunBFS(char * argv[])
 {
+	//opening file in some location to log results, etc.
+	 FILE *log = fopen("logfile.txt", "a");
+	    if (!log) {
+	        printf("\nCannot open logfile.txt for appending.\n");
+	        return (-1);   // bail out if we can't log
+	    }
+
 
 	int no_of_nodes;
 	int edge_list_size;
@@ -397,18 +418,23 @@ int mainRunBFS(char * argv[])
 	char *h_graph_mask, *h_updating_graph_mask, *h_graph_visited;
 	try{
 		char *input_f;
+		/*
 		if(argc!=2){
+		  fclose(log);
 		  Usage(argc, argv);
 		  exit(0);
-		}
+		}*/
 
-		input_f = argv[0]; //changed to 0 because of how c string is handled in helper
-		printf("Reading File\n");
+		input_f = argv[0]; //changed to 0 because of how c string is handled in helper?
+		fprintf(log, "Reading File\n");
+		//printf("Reading File\n");
 		//Read in Graph from a file
 		fp = fopen(input_f,"r");
 		if(!fp){
-		  printf("Error Reading graph file\n");
-		  return -1;
+		  fprintf(log, "Error Reading Graph file\n");
+		  //printf("Error Reading graph file\n");
+		  fclose(log);
+		  return (-1);
 		}
 
 		int source = 0;
@@ -467,6 +493,7 @@ int mainRunBFS(char * argv[])
 		}
 		h_cost[source]=0;
 		h_cost_ref[source]=0;
+		fclose(log);
 		//---------------------------------------------------------
 		//--gpu entry
 		run_bfs_gpu(no_of_nodes,h_graph_nodes,edge_list_size,h_graph_edges,
@@ -481,15 +508,17 @@ int mainRunBFS(char * argv[])
 
 	}
 	catch(std::string msg){
-		std::cout<<"--combine: exception in main ->"<<msg<<std::endl;
+		FILE *log = fopen("logfile.txt", "a");
+		fprintf(log, "--combine: exception in main -> %s\n", msg.c_str());
+		//std::cout<<"--combine: exception in main ->"<<msg<<std::endl;
 		//release host memory
 		free(h_graph_nodes);
 		free(h_graph_mask);
 		free(h_updating_graph_mask);
 		free(h_graph_visited);
 	}
-
-    return 0;
+	fclose(log);
+    return (0);
 }
 
 
