@@ -18,8 +18,8 @@ static cl::Context      gContext;
 static cl::CommandQueue gQueue;
 static cl::Kernel       gNV21Kernel;
 static cl::Kernel       gLaplacianK;
-static cl::Kernel		gbfs; //also, bfs has two separate kernels for different numbers of arguments.
-							  //I have yet to look into whatever each does.
+static cl::Kernel		gbfs;
+//may need to look deeper into how kernels are used in bfs
 
 
 //Forward declaration of main runBFS function
@@ -112,13 +112,13 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
 {
 	int set_NDRange_size=16;
 
-	//opening file and closing. Will append to it in later methods
+	//opening file and closing. Appended to in later locations
 	 FILE *log = fopen("logfile.txt", "w");
 	    if (!log) {
 	        printf("\nCannot open logfile.txt for writing.\n");
 	        return;   // bail out if we can't log
 	    }
-	    fclose(log);
+
 
 
     try {
@@ -131,21 +131,21 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
 
 
         if (choice[0]==1) {
-
+        	fclose(log);
         	char filePath[] = "../assets/graph4096.txt";
         	char* filePathptr = &filePath[0];
         	int result = mainRunBFS(&filePathptr);
-        	//also, if result is negative one, need to indicate an error
+        	if (result < 0) {
+        		FILE *log = fopen("logfile.txt", "a");
+        		fprintf(log, "\n----------\nError in running mainRunBFS\n----------\n");
+        		fclose(log);
+        	}
         	//int result = mainRunBFS(char * argv[]); // need a c string to pass it
         	/***ZACH*** Here is where you're going to do BFS
         	 * I don't know what sequential number bfs is yet. I'll figure it out eventually.....
         	 */
 
-        	/***MADDY*** Above is the call to the function to run bfs
-        	 * I still need to convert all the output there to go to an outfile
-        	 *
-        	 */
-
+        	/*
             gLaplacianK.setArg(2,w);
             gLaplacianK.setArg(3,h);
             gLaplacianK.setArg(1,bufferOut);
@@ -156,12 +156,16 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
                     cl::NDRange(set_NDRange_size,set_NDRange_size),
                     NULL,
                     NULL);
+            */
         }
         gQueue.enqueueReadBuffer(bufferOut2, CL_TRUE, 0, osize*sizeof(cl_uchar4), out);
 
     }
     catch (cl::Error e) {
         LOGI("@oclDecoder: %s %d \n",e.what(),e.err());
+    }
+    if(log) {
+    	fclose(log);
     }
 }
 
@@ -349,7 +353,7 @@ void run_bfs_gpu(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
 
 			_clMemcpyD2H(d_over,sizeof(char), &h_over);
 			}while(h_over);
-
+		FILE *log = fopen("logfile.txt", "a");
 		_clFinish();
 #ifdef	PROFILING
 		kernel_timer.stop();
