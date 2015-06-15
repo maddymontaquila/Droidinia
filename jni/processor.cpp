@@ -111,7 +111,6 @@ JNIEXPORT jboolean JNICALL Java_com_example_LiveFeatureActivity_compileKernels(J
 void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int choice[])
 {
 	int set_NDRange_size=16;
-	char filePath[];
 	char* filePathptr;
 	int result = 0;
 
@@ -134,7 +133,7 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
 
         if (choice[0]==1) {
         	fclose(log);
-        	filePath[] = "../assets/graph4096.txt";
+        	char filePath[] = "../assets/graph4096.txt";
         	filePathptr = &filePath[0];
         	result = mainRunBFS(&filePathptr);
         	if (result < 0) {
