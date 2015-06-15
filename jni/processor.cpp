@@ -18,7 +18,7 @@ static cl::Context      gContext;
 static cl::CommandQueue gQueue;
 static cl::Kernel       gNV21Kernel;
 static cl::Kernel       gLaplacianK;
-static cl::Kernel		gbfs;
+//static cl::Kernel		gbfs;
 //may need to look deeper into how kernels are used in bfs
 
 
@@ -111,6 +111,9 @@ JNIEXPORT jboolean JNICALL Java_com_example_LiveFeatureActivity_compileKernels(J
 void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int choice[])
 {
 	int set_NDRange_size=16;
+	char filePath[];
+	char* filePathptr;
+	int result = 0;
 
 	//opening file and closing. Appended to in later locations
 	 FILE *log = fopen("logfile.txt", "w");
@@ -127,17 +130,16 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
         cl::Buffer bufferOut = cl::Buffer(gContext, CL_MEM_READ_WRITE, osize*sizeof(cl_uchar4));
         cl::Buffer bufferOut2= cl::Buffer(gContext, CL_MEM_READ_WRITE, osize*sizeof(cl_uchar4));
 
-        ////do we need to declare the buffer sizes????????////
 
 
         if (choice[0]==1) {
         	fclose(log);
-        	char filePath[] = "../assets/graph4096.txt";
-        	char* filePathptr = &filePath[0];
-        	int result = mainRunBFS(&filePathptr);
+        	filePath[] = "../assets/graph4096.txt";
+        	filePathptr = &filePath[0];
+        	result = mainRunBFS(&filePathptr);
         	if (result < 0) {
         		FILE *log = fopen("logfile.txt", "a");
-        		fprintf(log, "\n----------\nError in running mainRunBFS\n----------\n");
+        		fprintf(log, "\n\n----------\nError in running mainRunBFS\n----------\n\n");
         		fclose(log);
         	}
         	//int result = mainRunBFS(char * argv[]); // need a c string to pass it
