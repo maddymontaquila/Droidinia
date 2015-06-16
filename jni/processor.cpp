@@ -108,7 +108,7 @@ JNIEXPORT jboolean JNICALL Java_com_example_LiveFeatureActivity_compileKernels(J
     }
 }
 
-void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int choice[])
+void helper(uint8_t* in, int isize, int choice[])
 {
 	int set_NDRange_size=16;
 	char* filePathptr;
@@ -126,12 +126,56 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
     try {
         cl::Buffer bufferIn = cl::Buffer(gContext, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
                 isize*sizeof(cl_uchar), in, NULL);
-        cl::Buffer bufferOut = cl::Buffer(gContext, CL_MEM_READ_WRITE, osize*sizeof(cl_uchar4));
-        cl::Buffer bufferOut2= cl::Buffer(gContext, CL_MEM_READ_WRITE, osize*sizeof(cl_uchar4));
+        cl::Buffer bufferOut = cl::Buffer(gContext, CL_MEM_READ_WRITE, isize*sizeof(cl_uchar4));
+
+    	//int result = mainRunBFS(char * argv[]); // need a c string to pass it
+
+    	/*
+        gLaplacianK.setArg(2,w);
+        gLaplacianK.setArg(3,h);
+        gLaplacianK.setArg(1,bufferOut);
+        gLaplacianK.setArg(0,bufferOut2);
+        gQueue.enqueueNDRangeKernel(gLaplacianK,
+                cl::NullRange,
+                cl::NDRange( (int)ceil((float)w/16.0f)*16,(int)ceil((float)h/16.0f)*16),
+                cl::NDRange(set_NDRange_size,set_NDRange_size),
+                NULL,
+                NULL);
+        */
+
+        if (choice[0]==1) { //leukocyte
 
 
+        }
+        if (choice[1]==1){ //heartwall
 
-        if (choice[0]==1) {
+        }
+
+        if (choice[2]==1){ //CFD
+
+        }
+
+        if (choice[3]==1){ //LUdecomp
+
+        }
+
+        if (choice[4]==1){ //hotspot
+
+        }
+
+        if (choice[5]==1){ //backprop
+
+        }
+
+        if (choice[6]==1){ //needleman
+
+        }
+
+        if (choice[7]==1){ //kmeans
+
+        }
+
+        if (choice[8]==1){ //BFS
         	fclose(log);
         	char filePath[] = "../assets/graph4096.txt";
         	filePathptr = &filePath[0];
@@ -141,25 +185,54 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
         		fprintf(log, "\n\n----------\nError in running mainRunBFS\n----------\n\n");
         		fclose(log);
         	}
-        	//int result = mainRunBFS(char * argv[]); // need a c string to pass it
-        	/***ZACH*** Here is where you're going to do BFS
-        	 * I don't know what sequential number bfs is yet. I'll figure it out eventually.....
-        	 */
-
-        	/*
-            gLaplacianK.setArg(2,w);
-            gLaplacianK.setArg(3,h);
-            gLaplacianK.setArg(1,bufferOut);
-            gLaplacianK.setArg(0,bufferOut2);
-            gQueue.enqueueNDRangeKernel(gLaplacianK,
-                    cl::NullRange,
-                    cl::NDRange( (int)ceil((float)w/16.0f)*16,(int)ceil((float)h/16.0f)*16),
-                    cl::NDRange(set_NDRange_size,set_NDRange_size),
-                    NULL,
-                    NULL);
-            */
         }
-        gQueue.enqueueReadBuffer(bufferOut2, CL_TRUE, 0, osize*sizeof(cl_uchar4), out);
+
+        if (choice[9]==1){ //srad
+
+        }
+
+        if (choice[10]==1){ //streamcluster
+
+        }
+
+        if (choice[11]==1){ //particle filter
+
+        }
+
+        if (choice[12]==1){ //pathfinder
+
+        }
+
+        if (choice[13]==1){ //gaussian
+
+        }
+
+        if (choice[14]==1){ //k nearest
+
+        }
+
+        if (choice[15]==1){ //lava
+
+        }
+
+        if (choice[16]==1){ //myocyte
+
+        }
+
+        if (choice[17]==1){ //btree
+
+        }
+
+        if (choice[18]==1){ //gpudwt
+
+        }
+
+        if (choice[19]==1){ //hybrid sort
+
+        }
+
+        //last arg in this should be out???
+        gQueue.enqueueReadBuffer(bufferOut, CL_TRUE, 0, isize*sizeof(cl_uchar4), NULL);
 
     }
     catch (cl::Error e) {
@@ -173,30 +246,20 @@ void helper(uint32_t* out, int osize, uint8_t* in, int isize, int w, int h, int 
 JNIEXPORT void JNICALL Java_com_example_LiveFeatureActivity_runbenchmarks(
         JNIEnv *env,
         jclass clazz,
-        jobject output,
-        jbyteArray inData,
-        jint width,
-        jint height,
-        jint choice[])
-{
-    int outsz = width*height;
-    int insz = outsz + outsz/2;
+        jint choice[]){
 
-    uint32_t* outContent;
-
+	jarray inData=0;
+	int isize=0;
+	//Open file, read data, save as inData
+	//isize is size of data array
     jbyte* inPtr = (jbyte*)env->GetPrimitiveArrayCritical(inData, 0);
     if (inPtr == NULL) {
         throwJavaException(env,"gaussianBlur","NV21 byte stream getPointer returned NULL");
         return;
     }
 
-    /***MADDY***
-     * What is going on here with the helper call?
-     * It appears to send the width and height of the screen, which I think we will no longer need
-     */
-
     // call helper for processing frame
-    helper(outContent,outsz,(uint8_t*)inPtr,insz,width,height,choice);
+    helper((uint8_t*)inPtr,isize,choice);
     // This is absolutely necessary before calling any other JNI function
     env->ReleasePrimitiveArrayCritical(inData,inPtr,0);
     //output

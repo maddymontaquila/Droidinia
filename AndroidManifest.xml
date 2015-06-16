@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.LiveFeatureActivity"
-            android:label="@string/title_activity_live_feature"
+            android:label="@string/title"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

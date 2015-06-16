@@ -7,12 +7,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 public class LiveFeatureActivity extends Activity {
 
@@ -20,10 +27,17 @@ public class LiveFeatureActivity extends Activity {
         System.loadLibrary("JNIProcessor");
     }
 
-    private final String TAG="LiveFeature";
+    private final String TAG="RodiniaBenchmarks";
+    private int[]     mChoice;
+    private CheckBox leukocyte, heartwall, cfdsolver, ludecomp, hotspot, backpropogation;
+    private CheckBox needleman, kmeans, bfs, srad, streamcluster, particlefilter;
+    private CheckBox pathfinder, gaussian, nearestneighbors, lavamd, myocyte, btree, gpudwt, hybridsort;
+    private Button runbutton;
+    private Button selectallbutton;
+    private TextView tv;
 
 	native private boolean compileKernels();
-	native private void runbenchmarks(Bitmap out, byte[] in, int width, int height, int choice);
+	native private void runbenchmarks(int[] choice);
 
     private void copyFile(final String f) {
 		InputStream in;
@@ -55,23 +69,64 @@ public class LiveFeatureActivity extends Activity {
         if( compileKernels() == false )
             Log.i(TAG,"Kernel compilation failed");
 
+        addListenerOnRunButton();
+	}
+	
+	public void addListenerOnRunButton() {
+	     runbutton = (Button) findViewById(R.id.runbutton);
+	     
+	     runbutton.setOnClickListener(new OnClickListener(){
+
+			public void onClick(View v) {
+				startTests();
+			}
+	     });
+	}
+	
+	
+    public void startTests() {
+    	tv = (TextView) findViewById(R.id.tv);
+    	
+    	//create checkboxes for each option
+    	leukocyte = (CheckBox) findViewById(R.id.leukocyte);
+    	heartwall = (CheckBox) findViewById(R.id.heartwall);
+    	cfdsolver = (CheckBox) findViewById(R.id.cfdsolver);
+    	ludecomp = (CheckBox) findViewById(R.id.ludecomp);
+    	hotspot = (CheckBox) findViewById(R.id.hotspot);
+    	backpropogation = (CheckBox) findViewById(R.id.backpropogation);
+    	needleman = (CheckBox) findViewById(R.id.needleman);
+    	kmeans = (CheckBox) findViewById(R.id.kmeans);
+    	bfs = (CheckBox) findViewById(R.id.bfs);
+    	srad = (CheckBox) findViewById(R.id.srad);
+    	streamcluster = (CheckBox) findViewById(R.id.streamcluster);
+    	particlefilter = (CheckBox) findViewById(R.id.particlefilter);
+    	pathfinder = (CheckBox) findViewById(R.id.pathfinder);
+    	gaussian = (CheckBox) findViewById(R.id.gaussian);
+    	nearestneighbors = (CheckBox) findViewById(R.id.nearestneighbors);
+    	lavamd = (CheckBox) findViewById(R.id.lavamd);
+    	myocyte = (CheckBox) findViewById(R.id.myocyte);
+    	btree = (CheckBox) findViewById(R.id.btree);
+    	gpudwt = (CheckBox) findViewById(R.id.gpudwt);
+    	hybridsort = (CheckBox) findViewById(R.id.hybridsort);
+    	
+    	int[] choice = new int[19];
+    	
+    	if (leukocyte.isChecked())
+    		choice[0]=1;
+    	else
+    		choice[0]=0;
+    	
+    	
+    	mChoice=choice;
+    	try {
+            //runbenchmarks(mChoice);
+            tv.setText("Running Tests...");
+    	} catch(Exception e) {
+    		Log.i(TAG, e.getMessage());
+    	}
         
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.live_feature, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-
+    }
+	
 	@Override
 	protected void onPause() {
 		super.onPause();

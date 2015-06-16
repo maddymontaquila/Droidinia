@@ -30,14 +30,6 @@ public class BenchmarkHandler {
     native private void runbenchmarks(Bitmap out, byte[] in, int width, int height, int[] choice);
 
 
-    public void startTests(byte[] data, int[] choice) {
-    	mChoice=choice;
-    	try {
-            runbenchmarks(mBackBuffer,data,mImgDims[0],mImgDims[1],mChoice);
-    	} catch(Exception e) {
-    		Log.i(TAG, e.getMessage());
-    	}
-        
-    }
+
 
 }
